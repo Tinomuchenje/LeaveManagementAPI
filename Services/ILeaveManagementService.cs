@@ -9,5 +9,7 @@ namespace LeaveManagementAPI.Services
         Task<Leave> AddLeaveAsync(Leave leave);
         Task<bool> UpdateLeaveAsync(Leave leave);
         Task<bool> DeleteLeaveAsync(int id);
+        Task<bool> ApproveLeaveAsync(int id, UserRole currentUserRole);
+        Task<bool> RejectLeaveAsync(int id, UserRole currentUserRole);
     }
 }

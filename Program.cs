@@ -2,6 +2,13 @@ using LeaveManagementAPI.Data;
 using LeaveManagementAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using LeaveManagementAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +16,25 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<LeaveManagementContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+.AddEntityFrameworkStores<LeaveManagementContext>().AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication(options => { options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; }).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is not configured.")))
+    };
+});
+
 builder.Services.AddScoped<ILeaveManagementService, LeaveManagementService>();
+builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 
 builder.Services.AddControllers();
 

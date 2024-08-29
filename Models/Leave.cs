@@ -5,6 +5,14 @@ using System.Threading.Tasks;
 
 namespace LeaveManagementAPI.Models
 {
+
+    public enum UserRole
+    {
+        Employee,
+        Supervisor,
+        Admin
+    }
+
     public class Leave
     {
         public int Id { get; set; }
@@ -13,7 +21,8 @@ namespace LeaveManagementAPI.Models
         public DateTime EndDate { get; set; }
         public required string Reason { get; set; }
         public LeaveType Type { get; set; }
-        public LeaveStatus Status { get; set; }
+        public LeaveStatus Status { get; set; } = LeaveStatus.Pending;
+        public UserRole SubmittedByRole { get; set; } // Track who submitted the leave
     }
 
     public enum LeaveType

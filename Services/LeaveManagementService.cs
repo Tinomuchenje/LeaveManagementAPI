@@ -70,5 +70,36 @@ namespace LeaveManagementAPI.Services
         {
             return _context.Leaves.Any(e => e.Id == id);
         }
+
+        public async Task<bool> ApproveLeaveAsync(int id, UserRole currentUserRole)
+        {
+            var leave = await _context.Leaves.FindAsync(id);
+            if (leave == null || leave.Status != LeaveStatus.Pending)
+                return false;
+
+            // If the leave was submitted by a Supervisor, only an Admin can approve/reject
+            if (leave.SubmittedByRole == UserRole.Supervisor && currentUserRole != UserRole.Admin)
+                return false;
+
+            leave.Status = LeaveStatus.Approved;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> RejectLeaveAsync(int id, UserRole currentUserRole)
+        {
+            var leave = await _context.Leaves.FindAsync(id);
+            if (leave == null || leave.Status != LeaveStatus.Pending)
+                return false;
+
+            // If the leave was submitted by a Supervisor, only an Admin can approve/reject
+            if (leave.SubmittedByRole == UserRole.Supervisor && currentUserRole != UserRole.Admin)
+                return false;
+
+            leave.Status = LeaveStatus.Rejected;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }
