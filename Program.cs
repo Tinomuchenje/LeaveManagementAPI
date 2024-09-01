@@ -38,6 +38,9 @@ builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddHttpContextAccessor(); // To access the current user
+builder.Services.AddScoped<ILeaveBalanceService, LeaveBalanceService>();
+builder.Services.AddHostedService<LeaveBalanceUpdateService>();
+
 
 
 builder.Services.AddControllers();

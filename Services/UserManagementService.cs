@@ -2,16 +2,20 @@ using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LeaveManagementAPI.Models;
+using Microsoft.EntityFrameworkCore; // Add this directive
 
 namespace LeaveManagementAPI.Services
 {
     public class UserManagementService : IUserManagementService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILeaveBalanceService _leaveBalanceService;
 
-        public UserManagementService(UserManager<ApplicationUser> userManager)
+
+        public UserManagementService(UserManager<ApplicationUser> userManager, ILeaveBalanceService leaveBalanceService)
         {
             _userManager = userManager;
+            _leaveBalanceService = leaveBalanceService;
         }
 
         public async Task<List<ApplicationUser>> GetAllUsersAsync()
@@ -26,11 +30,16 @@ namespace LeaveManagementAPI.Services
 
         public async Task<bool> CreateUserAsync(ApplicationUser user, string password, string role)
         {
+            _leaveBalanceService.InitializeLeaveBalances(user);
+
+
             var result = await _userManager.CreateAsync(user, password);
             if (!result.Succeeded) return false;
+
             var roleResult = await _userManager.AddToRoleAsync(user, role);
             return result.Succeeded;
         }
+
 
         public async Task<bool> UpdateUserAsync(ApplicationUser user)
         {

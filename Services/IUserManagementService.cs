@@ -10,7 +10,7 @@ namespace LeaveManagementAPI.Services
     {
         Task<List<ApplicationUser>> GetAllUsersAsync();
         Task<ApplicationUser> GetUserByIdAsync(string id);
-        Task<bool> CreateUserAsync(ApplicationUser user, string password);
+        Task<bool> CreateUserAsync(ApplicationUser user, string password, string role);
         Task<bool> UpdateUserAsync(ApplicationUser user);
         Task<bool> DeleteUserAsync(string id);
         Task<bool> AssignRoleAsync(string userId, string role);

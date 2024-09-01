@@ -2,6 +2,8 @@ using LeaveManagementAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using LeaveManagementAPI.Models;
+using LeaveManagementAPI.Models.DTOs;
 
 namespace LeaveManagementAPI.Controllers
 {
@@ -11,10 +13,14 @@ namespace LeaveManagementAPI.Controllers
     public class UserManagementController : ControllerBase
     {
         private readonly IUserManagementService _userManagementService;
+        private readonly ILeaveBalanceService _leaveBalanceService;
 
-        public UserManagementController(IUserManagementService userManagementService)
+
+        public UserManagementController(IUserManagementService userManagementService, , ILeaveBalanceService leaveBalanceService)
         {
             _userManagementService = userManagementService;
+            _leaveBalanceService = leaveBalanceService;
+
         }
 
         // GET: api/UserManagement
@@ -38,25 +44,28 @@ namespace LeaveManagementAPI.Controllers
 
         // POST: api/UserManagement
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
+        public async Task<IActionResult> CreateUser([FromBody] UserRequestDto request)
         {
             var user = new ApplicationUser
             {
                 UserName = request.Username,
-                Email = request.Email
+                Email = request.Email,
+                FullName = request.FullName,
+                Gender = request.Gender,
+                Age = request.Age,
             };
 
-            var result = await _userManagementService.CreateUserAsync(user, request.Password, request.Role);
+            var result = await _userManagementService.CreateUserAsync(user, request.Password, request.Role, request.AnnualLeave, request.SickLeave, request.MaternityLeave);
 
             if (result)
-                return Ok("User created and role assigned successfully.");
+                return Ok("User created successfully with role and leave balances.");
 
             return BadRequest("Failed to create user or assign role.");
         }
 
         // PUT: api/UserManagement/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(string id, [FromBody] UpdateUserRequest request)
+        public async Task<IActionResult> UpdateUser(string id, [FromBody] UserRequestDto request)
         {
             var user = await _userManagementService.GetUserByIdAsync(id);
             if (user == null)
@@ -87,7 +96,7 @@ namespace LeaveManagementAPI.Controllers
 
         // POST: api/UserManagement/assign-role
         [HttpPost("assign-role")]
-        public async Task<IActionResult> AssignRole([FromBody] RoleRequest request)
+        public async Task<IActionResult> AssignRole([FromBody] RoleRequestDto request)
         {
             var result = await _userManagementService.AssignRoleAsync(request.UserId, request.Role);
 
@@ -99,7 +108,7 @@ namespace LeaveManagementAPI.Controllers
 
         // POST: api/UserManagement/remove-role
         [HttpPost("remove-role")]
-        public async Task<IActionResult> RemoveRole([FromBody] RoleRequest request)
+        public async Task<IActionResult> RemoveRole([FromBody] RoleRequestDto request)
         {
             var result = await _userManagementService.RemoveRoleAsync(request.UserId, request.Role);
 
@@ -107,6 +116,23 @@ namespace LeaveManagementAPI.Controllers
                 return Ok("Role removed successfully.");
 
             return BadRequest("Failed to remove role.");
+        }
+
+        [HttpGet("leave-balances/{userId}")]
+        public async Task<IActionResult> GetLeaveBalances(string userId)
+        {
+            var leaveBalances = await _leaveBalanceService.GetLeaveBalancesAsync(userId);
+            if (leaveBalances == null)
+                return NotFound("User not found.");
+
+            return Ok(leaveBalances);
+        }
+
+        [HttpPost("reset-leave-balances")]
+        public async Task<IActionResult> ResetLeaveBalances()
+        {
+            await _leaveBalanceService.UpdateLeaveBalancesAsync();
+            return Ok("Leave balances updated.");
         }
     }
 }

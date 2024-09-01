@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using LeaveManagementAPI.Services;
+using LeaveManagementAPI.Models.DTOs;
 
 namespace LeaveManagementAPI.Controllers
 {
@@ -13,13 +15,12 @@ namespace LeaveManagementAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly ILogger<AccountController> _logger;
+        private readonly ILoginService _loginService;
 
         public AccountController(ILogger<AccountController> logger)
         {
             _logger = logger;
         }
-
-        private readonly ILoginService _loginService;
 
         public AccountController(ILoginService loginService)
         {
