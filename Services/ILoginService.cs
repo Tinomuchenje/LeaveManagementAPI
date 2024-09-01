@@ -4,11 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using LeaveManagementAPI.Models;
 
-
 namespace LeaveManagementAPI.Services
 {
-    public interface IUserRoleService
+    public interface ILoginService
     {
-        Task<UserRole> GetUserRoleAsync(string userId);
+        Task<bool> LoginAsync(string username, string password);
+        Task LogoutAsync();
+        Task<ApplicationUser> GetCurrentUserAsync();
     }
 }

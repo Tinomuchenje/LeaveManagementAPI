@@ -35,6 +35,10 @@ builder.Services.AddAuthentication(options => { options.DefaultAuthenticateSchem
 
 builder.Services.AddScoped<ILeaveManagementService, LeaveManagementService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
+builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddHttpContextAccessor(); // To access the current user
+
 
 builder.Services.AddControllers();
 

@@ -1,6 +1,7 @@
 using LeaveManagementAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using LeaveManagementAPI.Models;
 
 namespace LeaveManagementAPI.Services
 {
@@ -16,6 +17,7 @@ namespace LeaveManagementAPI.Services
         public async Task<UserRole> GetUserRoleAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
+
             if (user == null)
                 return UserRole.Employee;
 

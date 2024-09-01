@@ -1,6 +1,7 @@
 using LeaveManagementAPI.Data;
 using LeaveManagementAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using LeaveManagementAPI.Models;
 
 namespace LeaveManagementAPI.Services
 {

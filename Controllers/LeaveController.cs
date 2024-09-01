@@ -11,9 +11,9 @@ namespace LeaveManagementAPI.Controllers
     public class LeaveController : ControllerBase
     {
         private readonly ILeaveManagementService _leaveService;
-        private readonly UserRoleService _userRoleService;
+        private readonly IUserRoleService _userRoleService;
 
-        public LeaveController(ILeaveManagementService leaveService, UserRoleService userRoleService)
+        public LeaveController(ILeaveManagementService leaveService, IUserRoleService userRoleService)
         {
             _leaveService = leaveService;
             _userRoleService = userRoleService;
